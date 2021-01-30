@@ -1,11 +1,14 @@
+import locale
 import math
 
 from PyQt5.QtWidgets import QMainWindow
 
-from constants import *
-from programui import Ui_MainWindow
 from plottrajectory import *
-import locale
+from programui import Ui_MainWindow
+from constants import *
+
+LEGEND_OFFSET = (10, -10)
+ITERATION_LIMIT = 1e4
 
 
 class ProgramWindow(QMainWindow, Ui_MainWindow):
@@ -13,7 +16,6 @@ class ProgramWindow(QMainWindow, Ui_MainWindow):
         super().__init__()
         self.setupUi(self)
         self.buildTrajectoriesBtn.clicked.connect(self.build_trajectories)
-        self.n = 500
 
         # стандартные значения величин (массы, скорости и т.д.)
         self.x = math.nan
@@ -24,13 +26,14 @@ class ProgramWindow(QMainWindow, Ui_MainWindow):
         self.cf = math.nan
         self.rho = math.nan
         self.s = math.nan
-        self.g = math.nan
         self.delta_t = math.nan
+
+        self.g = math.nan
+
         self.build_with_resistance = None
         self.build_without_resistance = None
-        # self.graphicsView.getPlotItem().sigRangeChanged.connect(
-        #     lambda *args, **kwargs: print(args, kwargs)
-        # )
+
+        self.gEdit.setText(locale.format_string('%.2f', G))
 
     def read_data(self):
         try:
@@ -44,9 +47,8 @@ class ProgramWindow(QMainWindow, Ui_MainWindow):
             self.s = locale.atof(self.SEdit.text())
             self.g = locale.atof(self.gEdit.text())
             self.delta_t = locale.atof(self.delta_tEdit.text())
-            self.build_with_resistance = self.withAirResistanceCheck.isChecked()
-            self.build_without_resistance = \
-                self.withoutAirResistanceCheck.isChecked()
+            self.build_with_resistance = self.WARCheck.isChecked()
+            self.build_without_resistance = self.WoARCheck.isChecked()
             self.errorMessage.setText('')
 
         except ValueError:
@@ -55,34 +57,59 @@ class ProgramWindow(QMainWindow, Ui_MainWindow):
     def build_trajectory_with_resistance(self, x, y, vx, vy):
         xx = [x]
         yy = [y]
-        for i in range(self.n):
+        i = 1
+        h = y
+        while (y > 0 or i == 1) and i < ITERATION_LIMIT:
             try:
                 x, y, vx, vy = trajectory_point_with_resistance(
                     x=x, y=y, vx=vx, vy=vy, m=self.m, cf=self.cf, s=self.s,
                     rho=self.rho, g=self.g, delta_t=self.delta_t
                 )
+
             except OverflowError:
                 break
+            h = max(y, h)
             xx += [x]
             yy += [y]
-        self.graphicsView.plot(xx, yy, pen='r')
+            i += 1
+        plot = self.graphicsView.plot(xx, yy, pen='r')
+        legend = self.graphicsView.getPlotItem().addLegend(offset=LEGEND_OFFSET)
+        legend.addItem(plot, 'с сопротивлением силы воздуха')
+        self.HWAREdit.setText(locale.format_string('%.2f', h))
+        self.SWAREdit.setText(locale.format_string('%.2f', x))
 
-    def build_trajectory_without_resistance(self, x, y, vx, vy):
-        xx = [x]
-        yy = [y]
-        for i in range(self.n):
+    def build_trajectory_without_resistance(self, x0, y0, vx, vy):
+        xx = [x0]
+        yy = [y0]
+        i = 1
+        x, y = x0, y0
+        h = y
+        while (y > 0 or i == 1) and i < ITERATION_LIMIT:
             try:
-                xi, yi = trajectory_point_without_resistance(
-                    x=x, y=y, vx=vx, vy=vy, g=self.g, t=i * self.delta_t
+                x, y = trajectory_point_without_resistance(
+                    x=x0, y=y0, vx=vx, vy=vy, g=self.g, t=i * self.delta_t
                 )
+
             except OverflowError:
                 break
-            xx += [xi]
-            yy += [yi]
-        self.graphicsView.plot(xx, yy, pen='b')
+            h = max(y, h)
+            xx += [x]
+            yy += [y]
+            i += 1
+        plot = self.graphicsView.plot(xx, yy, pen='b')
+        legend = self.graphicsView.getPlotItem().addLegend(offset=LEGEND_OFFSET)
+        legend.addItem(plot, 'без сопротивления силы воздуха')
+        self.HWoAREdit.setText(locale.format_string('%.2f', h))
+        self.SWoAREdit.setText(locale.format_string('%.2f', x))
 
     def build_trajectories(self):
+
         self.graphicsView.clear()
+        self.HWAREdit.clear()
+        self.HWoAREdit.clear()
+        self.SWAREdit.clear()
+        self.SWoAREdit.clear()
+
         self.read_data()
         x, y = self.x, self.y
         vx0 = self.v0 * math.cos(math.radians(self.alpha))
@@ -92,4 +119,3 @@ class ProgramWindow(QMainWindow, Ui_MainWindow):
         if self.build_without_resistance:
             self.build_trajectory_without_resistance(x, y, vx0, vy0)
         self.graphicsView.getPlotItem().showGrid(True, True)
-
