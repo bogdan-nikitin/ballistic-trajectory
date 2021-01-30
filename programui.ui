@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1015</width>
+    <width>1040</width>
     <height>907</height>
    </rect>
   </property>
@@ -14,7 +14,7 @@
    <string>Построение траектории баллистического движения тела</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <layout class="QGridLayout" name="gridLayout" columnstretch="1,0,0">
+   <layout class="QGridLayout" name="gridLayout" columnstretch="1,0">
     <item row="0" column="0">
      <widget class="PlotWidget" name="graphicsView"/>
     </item>
@@ -129,6 +129,20 @@
        </widget>
       </item>
       <item>
+       <widget class="QLabel" name="label_11">
+        <property name="text">
+         <string>Ускорение свободного падения g (в м²/с)</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLineEdit" name="gEdit">
+        <property name="text">
+         <string>10</string>
+        </property>
+       </widget>
+      </item>
+      <item>
        <widget class="QLabel" name="label_6">
         <property name="text">
          <string>Траектории баллистического движения тела:</string>
@@ -160,63 +174,53 @@
        </layout>
       </item>
       <item>
-       <widget class="QLabel" name="label_8">
-        <property name="text">
-         <string>Коэффициент сопротивления формы Cƒ</string>
-        </property>
-       </widget>
+       <layout class="QVBoxLayout" name="WARParamsLayout">
+        <item>
+         <widget class="QLabel" name="label_8">
+          <property name="text">
+           <string>Коэффициент сопротивления формы Cƒ</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLineEdit" name="CfEdit">
+          <property name="text">
+           <string>0,005</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="label_9">
+          <property name="text">
+           <string>Плотность среды (воздуха) ρ (в кг/м³):</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLineEdit" name="rhoEdit">
+          <property name="text">
+           <string>1</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="label_10">
+          <property name="text">
+           <string>Характерная площадь S (в м²)</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLineEdit" name="SEdit">
+          <property name="text">
+           <string>0,05</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </item>
       <item>
-       <widget class="QLineEdit" name="CfEdit">
-        <property name="text">
-         <string>0,005</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QLabel" name="label_9">
-        <property name="text">
-         <string>Плотность среды (воздуха) ρ (в кг/м³):</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QLineEdit" name="rhoEdit">
-        <property name="text">
-         <string>1</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QLabel" name="label_10">
-        <property name="text">
-         <string>Характерная площадь S (в м²)</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QLineEdit" name="SEdit">
-        <property name="text">
-         <string>0,05</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QLabel" name="label_11">
-        <property name="text">
-         <string>Ускорение свободного падения g (в м²/с)</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QLineEdit" name="gEdit">
-        <property name="text">
-         <string>10</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <spacer name="verticalSpacer_4">
+       <spacer name="verticalSpacer">
         <property name="orientation">
          <enum>Qt::Vertical</enum>
         </property>
@@ -236,71 +240,49 @@
        </widget>
       </item>
       <item>
-       <spacer name="verticalSpacer">
-        <property name="orientation">
-         <enum>Qt::Vertical</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>20</width>
-          <height>40</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
-      <item>
-       <layout class="QVBoxLayout" name="verticalLayout_3"/>
-      </item>
-      <item>
-       <widget class="QLabel" name="label_16">
-        <property name="text">
-         <string>С учётом силы сопротивления воздуха:</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QLabel" name="label_14">
-        <property name="text">
-         <string>Высота подъёма H (в м)</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QLineEdit" name="HWAREdit">
-        <property name="readOnly">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QLabel" name="label_18">
-        <property name="text">
-         <string>Дальность полёта S (в м)</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QLineEdit" name="SWAREdit">
-        <property name="readOnly">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <layout class="QVBoxLayout" name="verticalLayout_4">
+       <layout class="QVBoxLayout" name="WARPropsLayout">
         <item>
-         <spacer name="verticalSpacer_3">
-          <property name="orientation">
-           <enum>Qt::Vertical</enum>
+         <widget class="QLabel" name="label_16">
+          <property name="enabled">
+           <bool>true</bool>
           </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>20</width>
-            <height>40</height>
-           </size>
+          <property name="text">
+           <string>С учётом силы сопротивления воздуха:</string>
           </property>
-         </spacer>
+         </widget>
         </item>
+        <item>
+         <widget class="QLabel" name="label_14">
+          <property name="text">
+           <string>Высота подъёма H (в м)</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLineEdit" name="HWAREdit">
+          <property name="readOnly">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="label_18">
+          <property name="text">
+           <string>Дальность полёта S (в м)</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLineEdit" name="SWAREdit">
+          <property name="readOnly">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QVBoxLayout" name="WoARPropsLayout">
         <item>
          <widget class="QLabel" name="label_15">
           <property name="text">
@@ -382,7 +364,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1015</width>
+     <width>1040</width>
      <height>21</height>
     </rect>
    </property>

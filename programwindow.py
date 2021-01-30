@@ -11,6 +11,13 @@ LEGEND_OFFSET = (10, -10)
 ITERATION_LIMIT = 1e4
 
 
+def layout_children_set_enabled(layout, enabled):
+    i = 0
+    while layout.itemAt(i) is not None:
+        layout.itemAt(i).widget().setEnabled(enabled)
+        i += 1
+
+
 class ProgramWindow(QMainWindow, Ui_MainWindow):
     def __init__(self):
         super().__init__()
@@ -34,6 +41,19 @@ class ProgramWindow(QMainWindow, Ui_MainWindow):
         self.build_without_resistance = None
 
         self.gEdit.setText(locale.format_string('%.2f', G))
+        self.WoARCheck.stateChanged.connect(
+            self.switch_without_resistance_state
+        )
+        self.WARCheck.stateChanged.connect(
+            self.switch_with_resistance_state
+        )
+
+    def switch_without_resistance_state(self, state):
+        layout_children_set_enabled(self.WoARPropsLayout, state)
+
+    def switch_with_resistance_state(self, state):
+        layout_children_set_enabled(self.WARPropsLayout, state)
+        layout_children_set_enabled(self.WARParamsLayout, state)
 
     def read_data(self):
         try:
@@ -74,7 +94,7 @@ class ProgramWindow(QMainWindow, Ui_MainWindow):
             i += 1
         plot = self.graphicsView.plot(xx, yy, pen='r')
         legend = self.graphicsView.getPlotItem().addLegend(offset=LEGEND_OFFSET)
-        legend.addItem(plot, 'с сопротивлением силы воздуха')
+        legend.addItem(plot, 'траектория с сопротивлением силы воздуха')
         self.HWAREdit.setText(locale.format_string('%.2f', h))
         self.SWAREdit.setText(locale.format_string('%.2f', x))
 
@@ -98,7 +118,7 @@ class ProgramWindow(QMainWindow, Ui_MainWindow):
             i += 1
         plot = self.graphicsView.plot(xx, yy, pen='b')
         legend = self.graphicsView.getPlotItem().addLegend(offset=LEGEND_OFFSET)
-        legend.addItem(plot, 'без сопротивления силы воздуха')
+        legend.addItem(plot, 'траектория без сопротивления силы воздуха')
         self.HWoAREdit.setText(locale.format_string('%.2f', h))
         self.SWoAREdit.setText(locale.format_string('%.2f', x))
 
