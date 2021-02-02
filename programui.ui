@@ -110,21 +110,7 @@
       <item>
        <widget class="QLineEdit" name="mEdit">
         <property name="text">
-         <string>1</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QLabel" name="label_12">
-        <property name="text">
-         <string>Временной шаг Δt (в с):</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QLineEdit" name="delta_tEdit">
-        <property name="text">
-         <string>0,05</string>
+         <string>10</string>
         </property>
        </widget>
       </item>
@@ -176,6 +162,47 @@
       <item>
        <layout class="QVBoxLayout" name="WARParamsLayout">
         <item>
+         <widget class="QLabel" name="label_20">
+          <property name="text">
+           <string>Форма тела</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QComboBox" name="shapeBox">
+          <item>
+           <property name="text">
+            <string>Сфера</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Конус 2:1 (острием к потоку)</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Куб (поверхностью к потоку)</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Цилиндр (длина равна двум диаметрам, торцом к потоку)</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Вытянутое каплевидное тело</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Другая</string>
+           </property>
+          </item>
+         </widget>
+        </item>
+        <item>
          <widget class="QLabel" name="label_8">
           <property name="text">
            <string>Коэффициент сопротивления формы Cƒ</string>
@@ -212,6 +239,20 @@
         </item>
         <item>
          <widget class="QLineEdit" name="SEdit">
+          <property name="text">
+           <string>0,05</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="label_12">
+          <property name="text">
+           <string>Временной шаг Δt (в с):</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLineEdit" name="delta_tEdit">
           <property name="text">
            <string>0,05</string>
           </property>

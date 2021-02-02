@@ -9,6 +9,13 @@ from constants import *
 
 LEGEND_OFFSET = (10, -10)
 ITERATION_LIMIT = 1e4
+CF_SHAPES = [
+    0.47,
+    0.50,
+    1.05,
+    0.82,
+    0.04
+]
 
 
 def layout_children_set_enabled(layout, enabled):
@@ -40,13 +47,22 @@ class ProgramWindow(QMainWindow, Ui_MainWindow):
         self.build_with_resistance = None
         self.build_without_resistance = None
 
-        self.gEdit.setText(locale.format_string('%.2f', G))
+        self.gEdit.setText(locale.format_string('%g', G))
         self.WoARCheck.stateChanged.connect(
             self.switch_without_resistance_state
         )
         self.WARCheck.stateChanged.connect(
             self.switch_with_resistance_state
         )
+        self.shape_changed(0)
+        self.shapeBox.currentIndexChanged.connect(self.shape_changed)
+
+    def shape_changed(self, index):
+        if index < len(CF_SHAPES):
+            self.CfEdit.setText(locale.format_string('%g', CF_SHAPES[index]))
+            self.CfEdit.setDisabled(True)
+        else:
+            self.CfEdit.setEnabled(True)
 
     def switch_without_resistance_state(self, state):
         layout_children_set_enabled(self.WoARPropsLayout, state)
@@ -54,6 +70,9 @@ class ProgramWindow(QMainWindow, Ui_MainWindow):
     def switch_with_resistance_state(self, state):
         layout_children_set_enabled(self.WARPropsLayout, state)
         layout_children_set_enabled(self.WARParamsLayout, state)
+        self.CfEdit.setEnabled(
+            state and self.shapeBox.currentIndex() == len(CF_SHAPES)
+        )
 
     def read_data(self):
         try:
@@ -94,7 +113,7 @@ class ProgramWindow(QMainWindow, Ui_MainWindow):
             i += 1
         plot = self.graphicsView.plot(xx, yy, pen='r')
         legend = self.graphicsView.getPlotItem().addLegend(offset=LEGEND_OFFSET)
-        legend.addItem(plot, 'траектория с сопротивлением силы воздуха')
+        legend.addItem(plot, 'с сопротивлением силы воздуха')
         self.HWAREdit.setText(locale.format_string('%.2f', h))
         self.SWAREdit.setText(locale.format_string('%.2f', x))
 
@@ -118,7 +137,7 @@ class ProgramWindow(QMainWindow, Ui_MainWindow):
             i += 1
         plot = self.graphicsView.plot(xx, yy, pen='b')
         legend = self.graphicsView.getPlotItem().addLegend(offset=LEGEND_OFFSET)
-        legend.addItem(plot, 'траектория без сопротивления силы воздуха')
+        legend.addItem(plot, 'без сопротивления силы воздуха')
         self.HWoAREdit.setText(locale.format_string('%.2f', h))
         self.SWoAREdit.setText(locale.format_string('%.2f', x))
 
@@ -139,3 +158,6 @@ class ProgramWindow(QMainWindow, Ui_MainWindow):
         if self.build_without_resistance:
             self.build_trajectory_without_resistance(x, y, vx0, vy0)
         self.graphicsView.getPlotItem().showGrid(True, True)
+        self.graphicsView.getPlotItem().setTitle(
+            'Траектория(и) баллистического движения тела'
+        )
