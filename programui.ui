@@ -23,7 +23,7 @@
       <item>
        <widget class="QLabel" name="label">
         <property name="text">
-         <string>Начальные координаты тела:</string>
+         <string>Начальные координаты тела (в м):</string>
         </property>
        </widget>
       </item>
@@ -89,7 +89,7 @@
       <item>
        <widget class="QLabel" name="label_5">
         <property name="text">
-         <string>Начальная скорость тела v (в м/с)</string>
+         <string>Начальная скорость тела v (в м/с):</string>
         </property>
        </widget>
       </item>
@@ -103,7 +103,7 @@
       <item>
        <widget class="QLabel" name="label_7">
         <property name="text">
-         <string>Масса m (в кг)</string>
+         <string>Масса m (в кг):</string>
         </property>
        </widget>
       </item>
@@ -117,7 +117,7 @@
       <item>
        <widget class="QLabel" name="label_11">
         <property name="text">
-         <string>Ускорение свободного падения g (в м²/с)</string>
+         <string>Ускорение свободного падения g (в м²/с):</string>
         </property>
        </widget>
       </item>
@@ -125,6 +125,20 @@
        <widget class="QLineEdit" name="gEdit">
         <property name="text">
          <string>10</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="label_12">
+        <property name="text">
+         <string>Временной шаг Δt (в с):</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLineEdit" name="delta_tEdit">
+        <property name="text">
+         <string>0,05</string>
         </property>
        </widget>
       </item>
@@ -164,7 +178,7 @@
         <item>
          <widget class="QLabel" name="label_20">
           <property name="text">
-           <string>Форма тела</string>
+           <string>Форма тела:</string>
           </property>
          </widget>
         </item>
@@ -205,7 +219,7 @@
         <item>
          <widget class="QLabel" name="label_8">
           <property name="text">
-           <string>Коэффициент сопротивления формы Cƒ</string>
+           <string>Коэффициент сопротивления формы Cƒ:</string>
           </property>
          </widget>
         </item>
@@ -233,26 +247,12 @@
         <item>
          <widget class="QLabel" name="label_10">
           <property name="text">
-           <string>Характерная площадь S (в м²)</string>
+           <string>Характерная площадь S (в м²):</string>
           </property>
          </widget>
         </item>
         <item>
          <widget class="QLineEdit" name="SEdit">
-          <property name="text">
-           <string>0,05</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QLabel" name="label_12">
-          <property name="text">
-           <string>Временной шаг Δt (в с):</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QLineEdit" name="delta_tEdit">
           <property name="text">
            <string>0,05</string>
           </property>
@@ -295,7 +295,7 @@
         <item>
          <widget class="QLabel" name="label_14">
           <property name="text">
-           <string>Высота подъёма H (в м)</string>
+           <string>Высота подъёма H (в м):</string>
           </property>
          </widget>
         </item>
@@ -309,7 +309,7 @@
         <item>
          <widget class="QLabel" name="label_18">
           <property name="text">
-           <string>Дальность полёта S (в м)</string>
+           <string>Дальность полёта S (в м):</string>
           </property>
          </widget>
         </item>
@@ -334,7 +334,7 @@
         <item>
          <widget class="QLabel" name="label_17">
           <property name="text">
-           <string>Высота подъёма H (в м)</string>
+           <string>Высота подъёма H (в м):</string>
           </property>
          </widget>
         </item>
@@ -351,7 +351,7 @@
         <item>
          <widget class="QLabel" name="label_19">
           <property name="text">
-           <string>Дальность полёта S (в м)</string>
+           <string>Дальность полёта S (в м):</string>
           </property>
          </widget>
         </item>

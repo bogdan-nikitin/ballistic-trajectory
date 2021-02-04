@@ -1,14 +1,13 @@
 import locale
-import math
 
 from PyQt5.QtWidgets import QMainWindow
 
+from constants import *
 from plottrajectory import *
 from programui import Ui_MainWindow
-from constants import *
 
-LEGEND_OFFSET = (10, -10)
 ITERATION_LIMIT = 1e4
+LEGEND_OFFSET = (10, -10)
 CF_SHAPES = [
     0.47,
     0.50,
@@ -93,11 +92,14 @@ class ProgramWindow(QMainWindow, Ui_MainWindow):
         except ValueError:
             self.errorMessage.setText('Неверно введены данные')
 
-    def build_trajectory_with_resistance(self, x, y, vx, vy):
-        xx = [x]
-        yy = [y]
+    def build_trajectory_with_resistance(self, x0, y0, vx, vy):
+        xx = [x0]
+        yy = [y0]
+        vx_val = [vx]
+        vy_val = [vy]
+        h = y0
         i = 1
-        h = y
+        x, y = x0, y0
         while (y > 0 or i == 1) and i < ITERATION_LIMIT:
             try:
                 x, y, vx, vy = trajectory_point_with_resistance(
@@ -107,22 +109,35 @@ class ProgramWindow(QMainWindow, Ui_MainWindow):
 
             except OverflowError:
                 break
-            h = max(y, h)
+            if y < yy[i - 1] and h == y0:
+                h = fly_height(y0=yy[i - 1], vy=vy_val[i - 1], g=self.g)
             xx += [x]
             yy += [y]
+            vx_val += [vx]
+            vy_val += [vy]
             i += 1
+        s = fly_distance(x0=xx[i - 2], y0=yy[i - 2],
+                         vx=vx_val[i - 2], vy=vy_val[i - 2], g=self.g)
+        if type(s) == complex:
+            s = x
+        elif abs(s - xx[i - 1]) > abs(vx):
+            s = x
+        else:
+            xx[i - 1], yy[i - 1] = s, 0
+        h = max(y, h)
         plot = self.graphicsView.plot(xx, yy, pen='r')
         legend = self.graphicsView.getPlotItem().addLegend(offset=LEGEND_OFFSET)
         legend.addItem(plot, 'с сопротивлением силы воздуха')
         self.HWAREdit.setText(locale.format_string('%.2f', h))
-        self.SWAREdit.setText(locale.format_string('%.2f', x))
+        self.SWAREdit.setText(locale.format_string('%.2f', s))
 
     def build_trajectory_without_resistance(self, x0, y0, vx, vy):
         xx = [x0]
         yy = [y0]
+        h = fly_height(y0=y0, vy=vy, g=self.g) if vy > 0 else y0
+        s = fly_distance(x0=x0, y0=y0, vx=vx, vy=vy, g=self.g)
         i = 1
         x, y = x0, y0
-        h = y
         while (y > 0 or i == 1) and i < ITERATION_LIMIT:
             try:
                 x, y = trajectory_point_without_resistance(
@@ -131,15 +146,21 @@ class ProgramWindow(QMainWindow, Ui_MainWindow):
 
             except OverflowError:
                 break
-            h = max(y, h)
             xx += [x]
             yy += [y]
             i += 1
+        if type(s) == complex:
+            s = x
+        elif abs(s - xx[i - 1]) > abs(vx):
+            s = x
+        else:
+            xx[i - 1], yy[i - 1] = s, 0
+        h = max(y, h)
         plot = self.graphicsView.plot(xx, yy, pen='b')
         legend = self.graphicsView.getPlotItem().addLegend(offset=LEGEND_OFFSET)
         legend.addItem(plot, 'без сопротивления силы воздуха')
         self.HWoAREdit.setText(locale.format_string('%.2f', h))
-        self.SWoAREdit.setText(locale.format_string('%.2f', x))
+        self.SWoAREdit.setText(locale.format_string('%.2f', s))
 
     def build_trajectories(self):
 
