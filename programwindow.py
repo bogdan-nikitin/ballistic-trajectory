@@ -1,9 +1,10 @@
 import locale
+import math
 
 from PyQt5.QtWidgets import QMainWindow
 
 from constants import *
-from plottrajectory import *
+from calculate_flight import *
 from programui import Ui_MainWindow
 
 ITERATION_LIMIT = 1e4
@@ -74,6 +75,15 @@ class ProgramWindow(QMainWindow, Ui_MainWindow):
         )
 
     def read_data(self):
+
+        self.graphicsView.clear()
+        self.HWAREdit.clear()
+        self.HWoAREdit.clear()
+        self.SWAREdit.clear()
+        self.SWoAREdit.clear()
+        self.tWAREdit.clear()
+        self.tWoAREdit.clear()
+
         try:
             self.x = locale.atof(self.xEdit.text())
             self.y = locale.atof(self.yEdit.text())
@@ -91,6 +101,8 @@ class ProgramWindow(QMainWindow, Ui_MainWindow):
 
         except ValueError:
             self.errorMessage.setText('Неверно введены данные')
+            return False
+        return True
 
     def build_trajectory_with_resistance(self, x0, y0, vx, vy):
         xx = [x0]
@@ -100,24 +112,28 @@ class ProgramWindow(QMainWindow, Ui_MainWindow):
         h = y0
         i = 1
         x, y = x0, y0
+        ax, ay = 0, -self.g
         while (y > 0 or i == 1) and i < ITERATION_LIMIT:
             try:
-                x, y, vx, vy = trajectory_point_with_resistance(
+                x, y, vx, vy, ax, ay = trajectory_point_with_resistance(
                     x=x, y=y, vx=vx, vy=vy, m=self.m, cf=self.cf, s=self.s,
                     rho=self.rho, g=self.g, delta_t=self.delta_t
                 )
 
             except OverflowError:
                 break
-            if y < yy[i - 1] and h == y0:
-                h = fly_height(y0=yy[i - 1], vy=vy_val[i - 1], g=self.g)
+            # if y < yy[i - 1] and h == y0:
+            if vy < 0 and h == y0:
+                h = fly_height(y0=yy[i - 1], vy=vy_val[i - 1], ay=ay)
             xx += [x]
             yy += [y]
             vx_val += [vx]
             vy_val += [vy]
             i += 1
         s = fly_distance(x0=xx[i - 2], y0=yy[i - 2],
-                         vx=vx_val[i - 2], vy=vy_val[i - 2], g=self.g)
+                         vx=vx_val[i - 2], vy=vy_val[i - 2], ax=ax, ay=ay)
+        t = self.delta_t * (i - 2)
+        t += flight_time(yy[i - 2], vy_val[i - 2], ay)
         if type(s) == complex:
             s = x
         elif abs(s - xx[i - 1]) > abs(vx):
@@ -130,12 +146,13 @@ class ProgramWindow(QMainWindow, Ui_MainWindow):
         legend.addItem(plot, 'с сопротивлением силы воздуха')
         self.HWAREdit.setText(locale.format_string('%.2f', h))
         self.SWAREdit.setText(locale.format_string('%.2f', s))
+        self.tWAREdit.setText(locale.format_string('%.2f', t))
 
     def build_trajectory_without_resistance(self, x0, y0, vx, vy):
         xx = [x0]
         yy = [y0]
-        h = fly_height(y0=y0, vy=vy, g=self.g) if vy > 0 else y0
-        s = fly_distance(x0=x0, y0=y0, vx=vx, vy=vy, g=self.g)
+        h = fly_height(y0=y0, vy=vy, ay=-self.g) if vy > 0 else y0
+        s = fly_distance(x0=x0, y0=y0, vx=vx, vy=vy, ax=0, ay=-self.g)
         i = 1
         x, y = x0, y0
         while (y > 0 or i == 1) and i < ITERATION_LIMIT:
@@ -156,21 +173,18 @@ class ProgramWindow(QMainWindow, Ui_MainWindow):
         else:
             xx[i - 1], yy[i - 1] = s, 0
         h = max(y, h)
+        t = flight_time(y0, vy, -self.g)
         plot = self.graphicsView.plot(xx, yy, pen='b')
         legend = self.graphicsView.getPlotItem().addLegend(offset=LEGEND_OFFSET)
         legend.addItem(plot, 'без сопротивления силы воздуха')
         self.HWoAREdit.setText(locale.format_string('%.2f', h))
         self.SWoAREdit.setText(locale.format_string('%.2f', s))
+        self.tWoAREdit.setText(locale.format_string('%.2f', t))
 
     def build_trajectories(self):
 
-        self.graphicsView.clear()
-        self.HWAREdit.clear()
-        self.HWoAREdit.clear()
-        self.SWAREdit.clear()
-        self.SWoAREdit.clear()
-
-        self.read_data()
+        if not self.read_data():
+            return
         x, y = self.x, self.y
         vx0 = self.v0 * math.cos(math.radians(self.alpha))
         vy0 = self.v0 * math.sin(math.radians(self.alpha))
