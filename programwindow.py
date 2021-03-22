@@ -2,6 +2,7 @@ import locale
 import math
 
 from PyQt5.QtWidgets import QMainWindow
+from PyQt5.QtGui import QDoubleValidator
 
 from constants import *
 from calculate_flight import *
@@ -29,6 +30,7 @@ class ProgramWindow(QMainWindow, Ui_MainWindow):
     def __init__(self):
         super().__init__()
         self.setupUi(self)
+        self.setup_validators()
         self.buildTrajectoriesBtn.clicked.connect(self.build_trajectories)
 
         # стандартные значения величин (массы, скорости и т.д.)
@@ -56,6 +58,14 @@ class ProgramWindow(QMainWindow, Ui_MainWindow):
         )
         self.shape_changed(0)
         self.shapeBox.currentIndexChanged.connect(self.shape_changed)
+
+    def setup_validators(self):
+        validator = QDoubleValidator()
+        for field in [
+            self.xEdit, self.yEdit, self.alphaEdit, self.v0Edit, self.mEdit,
+            self.gEdit, self.delta_tEdit, self.CfEdit, self.rhoEdit, self.SEdit
+        ]:
+            field.setValidator(validator)
 
     def shape_changed(self, index):
         if index < len(CF_SHAPES):
