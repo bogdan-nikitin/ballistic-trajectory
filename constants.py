@@ -1,1 +1,2 @@
 G = 10
+ITERATIONS_LIMIT = 1e4

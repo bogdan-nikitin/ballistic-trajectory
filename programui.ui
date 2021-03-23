@@ -38,7 +38,7 @@
          <property name="geometry">
           <rect>
            <x>0</x>
-           <y>0</y>
+           <y>-141</y>
            <width>347</width>
            <height>887</height>
           </rect>
@@ -129,7 +129,7 @@
             <item>
              <widget class="QLabel" name="label_7">
               <property name="text">
-               <string>Масса m (в кг):</string>
+               <string>Масса тела m (в кг):</string>
               </property>
              </widget>
             </item>
@@ -157,7 +157,7 @@
             <item>
              <widget class="QLabel" name="label_12">
               <property name="text">
-               <string>Временной шаг Δt (в с):</string>
+               <string>Интервал приращения времени Δt (в с):</string>
               </property>
              </widget>
             </item>
