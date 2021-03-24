@@ -33,23 +33,14 @@ def trajectory_with_resistance(x0, y0, vx, vy, g, m, cf, s, rho, delta_t):
             x=x, y=y, vx=vx, vy=vy, m=m, cf=cf, s=s,
             rho=rho, g=g, delta_t=delta_t
         )
+        h = max(h, y)
         xn += [x]
         yn += [y]
         vxn += [vx]
         vyn += [vy]
         i += 1
-        if 0 < vy / -ay < delta_t:
-            t = vy / -ay
-            h = fly_height(y0=y, vy=vy, ay=ay)
-            x_max = x + vx * t + ax * t ** 2 / 2
-            xn += [x_max]
-            yn += [h]
-            vxn += [vx + ax * t]
-            vyn += [vy + ay * t]
-            i += 1
     s = fly_distance(x0=xn[i - 2], y0=yn[i - 2],
                      vx=vxn[i - 2], vy=vyn[i - 2], ax=ax, ay=ay)
-    h = max(h, y)
     t = delta_t * (i - 2)
     t += flight_time(yn[i - 2], vyn[i - 2], ay)
     xn[i - 1], yn[i - 1] = s, 0
