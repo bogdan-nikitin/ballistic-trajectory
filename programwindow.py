@@ -65,6 +65,9 @@ class ProgramWindow(QMainWindow, Ui_MainWindow):
         self.shapeBox.currentIndexChanged.connect(self.shape_changed)
 
         self.graphicsView.setBackground('w')
+        # TODO: сделать заблокированное соотношение опциональным и добавить
+        #  возможность выбора в GUI (или хотя бы закоммитить что есть)
+        self.graphicsView.getPlotItem().setAspectLocked()
 
     def setup_validators(self):
         positive_num_validator = QDoubleValidator(self)
@@ -164,7 +167,6 @@ class ProgramWindow(QMainWindow, Ui_MainWindow):
         if i >= ITERATIONS_LIMIT:
             self.display_iterations_limit_error()
         plot = self.graphicsView.plot(xn, yn, pen='b')
-        # plot.getViewBox().setAspectLocked()
         plot.getViewBox().enableAutoRange(axis='xy')
         legend = self.graphicsView.getPlotItem().addLegend(offset=LEGEND_OFFSET)
         legend.addItem(plot, 'без сопротивления силы воздуха')
